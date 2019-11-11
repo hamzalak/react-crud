@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
+
 import EditComponent from './edit.component'
 import AddComponent from './add.component' ;
 import './App.css';
@@ -13,13 +15,20 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: [{}]
+      response: false,
+      endpoint: "http://localhost:3001" ,
+      products : [{}]
     };
   }
 
   componentDidMount() {
-    this.getProducts();
-  }
+    const { endpoint } = this.state;
+    const socket = socketIOClient(endpoint);
+    socket.on("FromAPI", data => {
+    console.log(data) ;
+    this.setState({ products : data })
+  }) ;
+ }
   /**********************************************/
   // Liste des produits
   /*****************************************************/
